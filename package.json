@@ -1,0 +1,17 @@
+{
+    "name": "personalize-steam",
+    "version": "0.1",
+    "description": "",
+    "main": "main.js",
+    "author": "Bartender",
+    "license": "none",
+    "devDependencies": {
+        "electron": "^19.0.4"
+    },
+    "scripts": {
+        "start": "electron ."
+    },
+    "dependencies": {
+        "electron-reload": "^2.0.0-alpha.1"
+    }
+}
