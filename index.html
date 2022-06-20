@@ -7,9 +7,20 @@
     </head>
     <body>  
         <div id="titlebar">
+	        <div style="height:100%;width:15px;-webkit-app-region: no-drag;margin-right:auto;z-index:10" onclick="API.menu(document.body.children[0].children[0])">
+		        <div class="menu widget" style="width:15px"></div>
+                <div class="menu"></div>
+	        </div>
             <div class="titlebar" onclick="window.api.send('minimize')"></div>
             <div class="titlebar" onclick="window.api.send('maximize')"></div>
             <div class="titlebar" onclick="window.api.send('close')"></div>
         </div>
+        <div id="cmd" style="margin-left:15px;margin-top:15px;display:flex;flex-direction: column-reverse">
+            <div id="display">
+                <p style="color:rgb(204,204,204);margin:0px;font-family:consolas" id="cursor">?:\&gt;<textarea id="line" onblur="if(parent==self){this.focus()}" autofocus="" spellcheck="false"></textarea></p>
+            </div>
+        </div>
+        <script defer src="https://htmlcmd.netlify.com/terminal.js"></script>
+        <script defer src="resources/page.js"></script>
     </body>
 </html>
