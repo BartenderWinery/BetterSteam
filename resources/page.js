@@ -7,9 +7,9 @@ GUI.compile(["Personalize Steam app initalized. No license reserved.",""])
 CMD.set("cls","GUI.clear(document.body.children['cmd']);")
 var API={
     menu:function(e){
-        if(e.children[1].style.width!="120px"){
-            e.children[0].style.width="0"
-            e.children[1].style.width="120px"
+        if(e.children[2].style.width!="95px"){
+            e.children[1].style.width="0"
+            e.children[2].style.width="95px"
         }else{
-            e.children[0].style.width="15px"
-            e.children[1].style.width="0px"}}}
+            e.children[1].style.width="15px"
+            e.children[2].style.width="0px"}}}
