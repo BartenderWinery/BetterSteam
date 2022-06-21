@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = "minimize;maximize;close";
+            let validChannels = "minimize;maximize;close;popout";
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             }

@@ -21,4 +21,6 @@ var app={
     cmd:cmd.children["display"].children[0].children[0],
     buffer:120}
 GUI.compile(["Personalize Steam app initalized. No license reserved.",""])
-CMD.set("cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"])
+CMD=new Map([
+    ["help",["GUI.compile(['?:\>[]',::,''])",["'cls       Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
+    ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]]])
