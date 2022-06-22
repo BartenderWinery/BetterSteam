@@ -1,8 +1,9 @@
-const{app,BrowserWindow,ipcMain}=require("electron")
+const{app,BrowserWindow,ipcMain, ipcRenderer}=require("electron")
 //require("electron-reload")(__dirname)
 require("electron-reload")(__dirname, {
     electron:require(`${__dirname}/node_modules/electron`)})
 const path=require("path")
+const fs=require('fs')
 
 var win=[]
 function popout(bounds,page){
@@ -25,3 +26,6 @@ ipcMain.on("minimize",(event,args)=>{BrowserWindow.getFocusedWindow().minimize()
 ipcMain.on("maximize",(event,args)=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",(event,args)=>{BrowserWindow.getFocusedWindow().close()})
 ipcMain.on("popout",(event,args)=>{popout([400,220],"resources/install.html")})
+ipcMain.on("exists",(event,args)=>{
+    fs.access(args+"/config.txt",fs.F_OK,(err)=>{
+        })})
