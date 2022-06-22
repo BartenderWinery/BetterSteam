@@ -3,10 +3,11 @@ window.onload=function(){
     if(navigator.userAgent.includes("Electron")){
         var p=document.createElement("style")
         p.appendChild(document.createTextNode(".desktop{display:flex}"))
+        p.appendChild(document.createTextNode(".web{display:none}"))
         document.head.appendChild(p)
     }else{
-        setTimeout(function(){GUI.compile(["Unfortunally, it doesn't seem like you have installed the application",])},10000)}
-        setTimeout(function(){GUI.compile(["If you're not sure, you can install it here: https://somewebsite.com/install"])},12000)
+        setTimeout(function(){GUI.compile(["Unfortunally, it doesn't seem like you have installed the application",])},10000)
+        setTimeout(function(){GUI.compile(["If you're not sure, you can install it here: https://somewebsite.com/install",""])},12000)}
     setTimeout(function(){GUI.compile(["Welcome to -undecided-, you can edit how your steam behaves or looks here!"])},500)
     setTimeout(function(){GUI.compile(["","To get started, you can click the first button in the row to the left"])},3000)
     setTimeout(function(){GUI.compile(["You can find themes and plugins here: https://somewebsite.com/"])},5500)
