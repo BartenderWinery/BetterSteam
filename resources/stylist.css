@@ -10,7 +10,7 @@
 .menu p{cursor:pointer}
 
 body{margin:0;background:#383838;overflow:hidden;font-size:10px;color:rgb(204,204,204);font-family:consolas}
-textarea{background-color:transparent;border:none;color:rgb(204,204,204);padding:0px;font-family:consolas;width:-webkit-fill-available;height:-webkit-fill-available;font-size:inherit;position:absolute}
+textarea{background-color:transparent;border:none;color:rgb(204,204,204);padding:0px;font-family:consolas;width:-webkit-fill-available;height:-webkit-fill-available;font-size:inherit;position:absolute;resize:none;overflow:hidden}
 textarea:focus{outline:none}
 svg{place-self:center;stroke-width:0.5px}
 label{color:rgb(119, 119, 119);white-space:nowrap;font-size:7.5px}
