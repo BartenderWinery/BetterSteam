@@ -6,13 +6,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Install for Steam</title>
     <link rel="stylesheet" href="stylist.css">
+    <style>
+        h1{border:1px solid white;font-size:9px;letter-spacing:1px;padding:1px;margin-bottom:2.5px}
+        .api{height:100%;width:30%;display:flex;flex-direction:column}
+        .api div{font-size:8px;color:red;border-left:1px solid red;top:-2px}
+        .api div p{margin:0;margin-left:2px}
+    </style>
 </head>
 <body>
-    <div id="titlebar">
+    <div id="titlebar" style="position:absolute">
         <div class="titlebar desktop" onclick="window.api.send('minimize')"><svg aria-hidden="false" width="12" height="12" viewBox="0 0 12 12"><rect fill="currentColor" width="10" height="0.8" x="1" y="6"></rect></svg></div>
         <div class="titlebar desktop" onclick="window.api.send('close')"><svg aria-hidden="false" width="12" height="12" viewBox="0 0 12 12"><polygon fill="currentColor" fill-rule="evenodd" points="11 1.576 6.583 6 11 10.424 10.424 11 6 6.583 1.576 11 1 10.424 5.417 6 1 1.576 1.576 1 6 5.417 10.424 1"></polygon></svg></div>
     </div>
+    <div style="display:flex;flex-wrap:nowrap;justify-content:space-evenly;margin:35px;height:-webkit-fill-available;width:-webkit-fill-available;position:absolute">
+        <div class="api">
+            <h1>Steam API</h1>
+            <div>
+                <p>Steam</p>
+                <p>Steamui</p>
+                <p>Steamui JS</p>
+                <p>Library</p>
+                <p>Resources</p>
+                <p>Protocols</p>
+            </div>
+        </div>
+        <div class="api">
+            <h1>Steam Injection</h1>
+            <div>
+                <p>Steam</p>
+                <p>Steamui</p>
+                <p>Steamui Css</p>
+                <p>Clientui</p>
+                <p>Client Css</p>
+                <p>Resources</p>
+                <p>TGA Resources</p>
+            </div>
+        </div>
+        <div class="api">
+            <h1>Logs</h1>
+            <div style="color:aliceblue;border-color:white">
+                <p>No API access detected, build required</p>
+            </div>
+        </div>
+    </div>
     <p style="position:absolute;bottom:0;color:rgb(204,204,204);margin:0px;font-family:consolas" id="cursor">Steam Dictionary Path:\&gt;<textarea id="line" onblur="if(parent==self){this.focus()}" autofocus="" spellcheck="false"></textarea></p>
+    <script src="https://aerodata.netlify.com/libraries/events.js"></script>
     <script defer src="page.js"></script>
+    <script>
+        AddEvent(window,'keydown',function(e){
+            console.log(e.keyCode)
+            switch(e.keyCode){
+                case 13: 
+                    break}})
+    </script>
 </body>
 </html>
