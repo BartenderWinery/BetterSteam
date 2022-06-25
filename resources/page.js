@@ -1,4 +1,3 @@
-
 window.onload=function(){
     if(navigator.userAgent.includes("Electron")){
         var p=document.createElement("style")
@@ -24,7 +23,7 @@ var API={
             e.children[2].style.width="0px"}}}
             
 //object indexing
-var taskbar=document.body.children["titlebar"]
+//var taskbar=document.body.children["titlebar"]
 var cmd=document.body.children["cmd"]
 if(document.title=="Personalize Steam"){
     var app={
@@ -32,5 +31,5 @@ if(document.title=="Personalize Steam"){
         cmd:cmd.children["display"].children[0].children[0],
         buffer:120}}
 CMD=new Map([
-    ["help",["SYS.compile(['?:\>[]',::,''])",["'cls       Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
+    ["help",["SYS.compile(['?:\\>[]',::,''])",["'cls       Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
     ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]]])
