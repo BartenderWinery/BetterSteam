@@ -1,0 +1,54 @@
+clientui - {
+    index friends.html
+    friends.js
+    css: {
+        fonts.css
+        friends.css
+        index_friends.css}}
+config - {
+    --Custom configs stored here--
+    loginusers.vdf}
+friends - {
+    --All friends resources here--}
+graphics - {
+    --Animated and picture resources here--}
+music - {
+    --Music resources here--}
+public - {
+    --All other HTML/translations/icon resources here--
+    url_list.txt -- Controls open protocol}
+resource - {
+    fonts: {
+        marlett.ttf}
+    layout: {
+        --All layout resources here--}
+    menu: {
+        --All menu resources here--}
+    styles: {
+        --All steam styles here--}
+    --more localization files--
+    --some dialog layouts and resources--
+    webkit.css}
+servers - {
+    --servers panel resources--
+    VACBannedConnRefusedDialog.res}
+steam - {
+    cache: {
+        --Tons of html and layout resources--
+        --Store page resources--}}
+steamui - {
+    --Lots of steamui scripts and library html resources--
+    --many files i dont know what they do reside here--
+    css: {
+        --Insanity worthy amounts of css files here--}
+    library: {
+        --not sure what they do yet--}}
+tenfoot - {
+    resource: {
+        --tons of resources for all menus and panels--
+        
+        --most notable below--
+        layout: {
+            --All xml resource files for all panels and menus--}
+        style: {
+            --Once again... style resources for all panels and menus--}}}
