@@ -1,4 +1,4 @@
-const{app,BrowserWindow,ipcMain, ipcRenderer}=require("electron")
+const{app,BrowserWindow,ipcMain}=require("electron")
 //require("electron-reload")(__dirname)
 require("electron-reload")(__dirname, {
     electron:require(`${__dirname}/node_modules/electron`)})
