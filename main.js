@@ -3,7 +3,7 @@ const{app,BrowserWindow,ipcMain, ipcRenderer}=require("electron")
 require("electron-reload")(__dirname, {
     electron:require(`${__dirname}/node_modules/electron`)})
 const path=require("path")
-const fs=require('fs')
+const fs=require("fs")
 
 var win=[]
 function popout(bounds,page){
@@ -22,10 +22,11 @@ function popout(bounds,page){
         setTimeout(function(){win[win.length-1].show()}),500}
 async function main(){popout([580,300],"index.html")}
 app.on("ready",main)
-ipcMain.on("minimize",(event,args)=>{BrowserWindow.getFocusedWindow().minimize()})
-ipcMain.on("maximize",(event,args)=>{BrowserWindow.getFocusedWindow().maximize()})
-ipcMain.on("close",(event,args)=>{BrowserWindow.getFocusedWindow().close()})
-ipcMain.on("popout",(event,args)=>{popout([400,220],"resources/install.html")})
-ipcMain.on("exists",(event,args)=>{
-    fs.access(args+"/config.txt",fs.F_OK,(err)=>{
-        })})
+ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
+ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
+ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
+ipcMain.on("popout",()=>{popout([400,220],"resources/install.html")})
+ipcMain.on("exists",(events,args)=>{
+    fs.access(args,fs.constants.R_OK|fs.constants.W_OK,(err)=>{
+        if(!err){BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Build dictionary verified.');document.activeElement.parentElement.innerText='"+args+"';document.activeElement.value=''");return}
+        BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log(\"Build dictionary wasn't found, please check the path.\");document.activeElement.value=''")})})

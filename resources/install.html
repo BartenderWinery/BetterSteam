@@ -50,14 +50,20 @@
             </div>
         </div>
     </div>
-    <p style="position:absolute;bottom:0;color:rgb(204,204,204);margin:0px;font-family:consolas" id="cursor">Steam Dictionary Path:\&gt;<textarea id="line" onblur="if(parent==self){this.focus()}" autofocus="" spellcheck="false"></textarea></p>
+    <p style="position:absolute;bottom:0;color:rgb(204,204,204);margin:0px;font-family:consolas" id="cursor">Steam Dictionary Path:\&gt;<input id="line" class="input" onblur="if(parent==self){this.focus()}" autofocus="" spellcheck="false"></input></p>
     <script src="https://aerodata.netlify.com/libraries/events.js"></script>
     <script defer src="page.js"></script>
     <script>
+        function log(d){document.body.children[1].children[3].children[1].insertAdjacentHTML("beforeEnd","<p style='white-space:nowrap;font-size:6px'>"+d+"</p>")}
         AddEvent(window,'keydown',function(e){
             console.log(e.keyCode)
             switch(e.keyCode){
-                case 13: 
+                case 13:
+                    switch(document.activeElement){
+                        case line:
+                            log("Build dictionary entered. Checking path...")
+                            window.api.send("exists",document.activeElement.value)
+                            break}
                     break}})
     </script>
 </body>
