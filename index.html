@@ -33,7 +33,21 @@
         <div id="settings" class="menu" style="right:0;top:0;position:absolute">
             <div class="titlebar" style="left:0;top:0;margin:2px;position:absolute;display:flex" onclick="document.body.children['settings'].style.width='0px'"><svg style="place-self:revert" aria-hidden="false" width="8" height="8" viewBox="0 0 12 12"><polygon fill="currentColor" fill-rule="evenodd" points="11 1.576 6.583 6 11 10.424 10.424 11 6 6.583 1.576 11 1 10.424 5.417 6 1 1.576 1.576 1 6 5.417 10.424 1"></polygon></svg></div>
         </div>
-        <script defer src="https://htmlcmd.netlify.com/terminal.js"></script>
+        <script src="https://htmlcmd.netlify.com/terminal.js"></script>
         <script defer src="resources/page.js"></script>
+        <script>
+            var cmd=document.body.children["cmd"]
+            if(document.title=="Personalize Steam"){
+                var app={
+                    terminal:cmd.children["display"],
+                    cmd:cmd.children["display"].children[0].children[0],
+                    buffer:120}}
+                app["cmd"].onchange=function(){}
+            CMD=new Map([
+                ["help",["SYS.compile(['?:\\>[]',::,''])",["'Exit        Exits the process','Install     Opens the install menu','cls         Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
+                ["install",["window.api.send('popout','index.html')"]],
+                ["exit",["window.api.send('close')"]],
+                ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]]])
+        </script>
     </body>
 </html>

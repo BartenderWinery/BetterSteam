@@ -22,24 +22,25 @@
         <div class="api">
             <h1>Steam API</h1>
             <div>
-                <p>Steam</p>
-                <p>Steamui</p>
-                <p>Steamui JS</p>
-                <p>Library</p>
-                <p>Resources</p>
-                <p>Protocols</p>
+                <p id="Steam">Steam</p>
+                <p id="Steamui">Steamui</p>
+                <p id="Steamui">Steamui JS</p>
+                <p id="Library">Library</p>
+                <p id="Resources">Resources</p>
+                <p id="Protocols">Protocols</p>
             </div>
         </div>
         <div class="api">
             <h1>Steam Injection</h1>
             <div>
-                <p>Steam</p>
-                <p>Steamui</p>
-                <p>Steamui Css</p>
-                <p>Clientui</p>
-                <p>Client Css</p>
-                <p>Resources</p>
-                <p>TGA Resources</p>
+                <p id="Steam">Steam</p>
+                <p id="Steamui">Steamui</p>
+                <p id="Steamui">Steamui Css</p>
+                <p id="Clientui">Clientui</p>
+                <p id="Client">Client Css</p>
+                <p id="Resources">Resources</p>
+                <p id="TGA Resources">TGA Resources</p>
+                <p id="Tenfoot">Tenfoot</p>
             </div>
         </div>
         <div style="height:100%;width:1px;background:white"></div>
@@ -62,7 +63,7 @@
                     switch(document.activeElement){
                         case line:
                             log("Build dictionary entered. Checking path...")
-                            window.api.send("exists",document.activeElement.value)
+                            window.api.send("build",document.activeElement.value)
                             break}
                     break}})
     </script>

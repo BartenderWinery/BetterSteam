@@ -21,17 +21,3 @@ var API={
         }else{
             e.children[1].style.width="15px"
             e.children[2].style.width="0px"}}}
-            
-//objects
-//var taskbar=document.body.children["titlebar"]
-var cmd=document.body.children["cmd"]
-if(document.title=="Personalize Steam"){
-    var app={
-        terminal:cmd.children["display"],
-        cmd:cmd.children["display"].children[0].children[0],
-        buffer:120}}
-    app["cmd"].onchange=function(){}
-CMD=new Map([
-    ["help",["SYS.compile(['?:\\>[]',::,''])",["'Install     Opens the install menu','cls         Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
-    ["install",["window.api.send('popout','index.html')"]],
-    ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]]])
