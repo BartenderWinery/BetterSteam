@@ -52,3 +52,9 @@ tenfoot - {
             --All xml resource files for all panels and menus--}
         style: {
             --Once again... style resources for all panels and menus--}}}
+            
+What applies to what??
+Top bar of UI containing settings and other options <= resource/menus/steam.menu
+library html <= steamui/index.html
+Main UI XML <= tenfoot/resource/layout/mainmenu.xml 
+Main UI CSS <= tenfoot/resource/styles/mainmenu_{?}.css
