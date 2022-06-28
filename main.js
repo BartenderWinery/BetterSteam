@@ -24,7 +24,17 @@ async function main(){popout([580,300],"index.html")}
 app.on("ready",main)
 var rcon={
     verify:function(path,keyword){fs.access(path,fs.constants.R_OK|fs.constants.W_OK,(err,data)=>{if(data.includes(keyword)){return true}})},
-    inject:function(path,k,d){}}
+    inject:function(path,k,d){
+        try{
+            fs.readFile(path,'utf8',(err,data)=>{
+                if(err)return
+                //Change comments to start/end comments per line to reserve comments instead of removing them
+                var pack=data.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g,'').replace(/[\r\n]+/g,"")
+                    //debug indented
+                fs.writeFile(path,pack.replace(k,d),(err)=>{
+                    if(err)return})})
+            return true
+        }catch(e){}}}
 ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
 ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
@@ -33,9 +43,11 @@ ipcMain.on("build",(events,args)=>{
     fs.access(args,fs.constants.R_OK|fs.constants.W_OK,(err,data)=>{
         if(!err){
             BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Build dictionary verified.');document.activeElement.parentElement.innerText='"+args+"';document.activeElement.value=''")
-            rcon.inject("D:/Steam/resource/menus/steam.menu")
+            if(rcon.inject(args+"/steamui/index.html","</body>","<div id=\"debug\" style=\"position:absolute;height:100%;width:400px;right:0;top:0\"></div><script>function traceMethodCalls(obj){;return new Proxy(obj, {get(target, methodName, receiver) {const originMethod = target[methodName];return function(...args) {document.body.children[\"debug\"].insertAdjacentHTML(\"afterbegin\",\"<p style='font-size:10px;margin:0;text-align:right;color:red;white-space:nowrap'>\"+args+\"</p>\");return originMethod.apply(this, args);}}})}console = traceMethodCalls(console)</script></body>"))
+                BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Steamui modified;Dev-only currently');document.body.children[1].children[1].children[1].children[1].style.color='#00eb00'")
+            //rcon.inject("D:/Steam/resource/menus/steam.menu")
             //BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Steam modified; Appended script');document.body.children[1].children[1].children[1].children[0].style.color='#00eb00'")
-            //BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Steamui modified; Injected script');document.body.children[1].children[1].children[1].children[1].style.color='#00eb00'")
+            
             //BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log('Tenfoot modified; Injected script');document.body.children[1].children[1].children[1].children[7].style.color='#00eb00'")
             return}
         BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log(\"Build dictionary wasn't found, please check the path.\");document.activeElement.value=''")})})
