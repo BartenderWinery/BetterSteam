@@ -63,7 +63,7 @@
                     switch(document.activeElement){
                         case line:
                             log("Build dictionary entered. Checking path...")
-                            window.api.send("build",document.activeElement.value)
+                            window.api.send("modify",["install",document.activeElement.value])
                             break}
                     break}})
     </script>
