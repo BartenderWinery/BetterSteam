@@ -39,12 +39,14 @@ steam - {
 steamui - {
     --Lots of steamui scripts and library html resources--
     --Numbered files represent localization--
+    --Library important css files: library.css, 2.css, 7.css--
     css: {
         --Insanity worthy amounts of css files here--}
     library: {
         --Code for the library--}}
 tenfoot - {
     resource: {
+        --resource folder for big picture, controller management, and video player UI--
         --tons of resources for all menus and panels--
         
         --most notable below--
