@@ -5,14 +5,13 @@ const fs=require("fs")
 require("electron-reload")(__dirname, {
     electron:require(`${__dirname}/node_modules/electron`)})
 
-function popout(bounds,page,parent){
+function popout(bounds,page){
     var win=new BrowserWindow({
         width:bounds[0],
         height:bounds[1],
         frame:false,
         show:false,
         backgroundColor:"#383838",
-        parent: parent,
         webPreferences:{
             nodeIntegration:false,
             contextIsolation:true,
@@ -35,8 +34,11 @@ var rcon={
             return true
         }catch(e){}},
     overwrite:function(path,d){
-        fs.writeFile(path,d,(err)=>{
-            if(err)return})}}
+        try{
+            fs.writeFile(path,d,(err)=>{
+                if(err)return}) 
+            return true
+        }catch(e){}}}
 ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
 ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
@@ -44,27 +46,50 @@ ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
 
     //create callback function to update the other if one is executed, such as uninstaller decolorizing APIs dyanmically if install is open
 ipcMain.on("modify",(events,args)=>{
-    fs.access(args[1],fs.constants.R_OK|fs.constants.W_OK,(err,data)=>{
-    if(err){BrowserWindow.getFocusedWindow().webContents.executeJavaScript("log(\"Build dictionary wasn't found, please check the path.\");document.activeElement.value=''");return}
-        if(BrowserWindow.getAllWindows()[1])BrowserWindow.getAllWindows()[0].webContents.executeJavaScript("log('Build dictionary verified.');document.activeElement.parentElement.innerText='"+args[1]+"';document.activeElement.value=''")
-        fs.readdir(path.join(__dirname+"/resources/libraries"),function(err,lib){
-            if(err)return
-            for(var i=0;i<lib.length;i++){
-                fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(err,data)=>{
-                    if(err)return
-                    var j=JSON.parse(data)
-                    switch(args[0]){
-                        case "uninstall":
-                            if(rcon.overwrite(args[1]+j["path"],j["uninstall"])){BrowserWindow.getAllWindows().at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])");return}
-                            BrowserWindow.getAllWindows().at(-1).webContents.executeJavaScript("SYS.compile(['Could not recover files in specified location, Please check spelling.'])")
-                            break
-                        case "install":
-                            if(args[1]=="undefined"){popout([400,220],"resources/install.html");return}
-                            if(rcon.overwrite(args[1]+j["path"],j["install"]))
-                                if(BrowserWindow.getAllWindows()[1])BrowserWindow.getAllWindows()[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');for(var i=0;i<"+j["success"]["id"]+".length){document.body.children[1].children[1].children["+j["success"]["id"]+"[i][0]].children["+j["success"]["id"]+"[i][1]].style.color='#00eb00'}")
-                            BrowserWindow.getAllWindows().at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
-                            break
-                        case "mod":
-                            break}})}})})})
+    switch(args[0],args[1]){
+        case "install","undefined":
+            popout([400,220],"resources/install.html")
+            return
+        default:
+            var wins=BrowserWindow.getAllWindows()
+            fs.access(args[1],fs.constants.R_OK|fs.constants.W_OK,(e,d)=>{
+                if(e){
+                    wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary wasn't found, please check the path.',''])")
+                    wins[0].webContents.executeJavaScript("log(\"Build dictionary wasn\'t found, please check the path.\");document.activeElement.value=''")
+                    return}
+                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary verified.',''])")
+                wins[0].webContents.executeJavaScript("log(\"Build dictionary verified.\")")
+                fs.readdir(path.join(__dirname+"/resources/libraries"),function(er,lib){
+                    if(er){
+                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
+                        return}
+                    for(var i=0;i<lib.length;i++){
+                        fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(err,data)=>{
+                            if(err){
+                                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Fail failure, please check permissions.'])")
+                                return}
+                            var j=JSON.parse(data)
+                            if(rcon.overwrite(args[1]+j["path"],j[args[0]])){
+                                switch(args[0]){
+                                    case "uninstall":
+                                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
+                                        break
+                                    case "install":
+                                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
+                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
+                                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
+                                        var ids=j["success"]["ids"].split(";")
+                                        for(var i=0;i<ids.length;i++){
+                                            wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
+                                        break}
+                                return  }
+                            //for(var i=0;i<"+j["success"]["id"]+".length){document.body.children[1].children[1].children["+j["success"]["id"]+"[i][0]].children["+j["success"]["id"]+"[i][1]].style.color='#00eb00'
+                            //switch(args[0]){
+                            //    case "uninstall":
+                            //        break
+                            //    case "install":
+                            //        if(rcon.overwrite(args[1]+j["path"],j[args[0]]))
+                            //        break}
+                            })}})})}})
     
 //replace <script injected>(keep name attrbute) and </script injected> with | and split; move to index 1 and you have your index
