@@ -1,6 +1,8 @@
 const{app,BrowserWindow,ipcMain}=require("electron")
 const path=require("path")
 const fs=require("fs")
+//Important. Clean up imports so it doesn't slow down loading times.
+
 //require("electron-reload")(__dirname)
 require("electron-reload")(__dirname, {
     electron:require(`${__dirname}/node_modules/electron`)})
