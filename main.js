@@ -23,36 +23,55 @@ function popout(bounds,page){
         setTimeout(function(){win.show()}),500}
 async function main(){
     popout([580,300],"index.html")
-    fs.readFile(path.join(__dirname,"config/app.txt"),'utf8',(err,data)=>{
-        if(err)return
+    fs.readFile(path.join(__dirname,"config/app.txt"),'utf8',(e,data)=>{
+        if(e)return
         if(!String(data).includes("active")){
             BrowserWindow.getAllWindows()[0].webContents.executeJavaScript("dis()")
-            fs.appendFile(path.join(__dirname,"config/app.txt"),";active",(err)=>{if(err)return})}})}
+            fs.appendFile(path.join(__dirname,"config/app.txt"),";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
-var rcon={
-    verify:function(path,keyword){fs.access(path,fs.constants.R_OK|fs.constants.W_OK,(err,data)=>{if(data.includes(keyword)){return true}})},
+var sys={
     inject:function(path,k,d){
         try{
-            fs.readFile(path,'utf8',(err,data)=>{
-                if(err)return
+            fs.readFile(path,'utf8',(e,data)=>{
+                if(e)return
                 //Change comments to start/end comments per line to reserve comments instead of removing them
                 var pack=data.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g,'').replace(/[\r\n]+/g,"")
-                fs.writeFile(path,pack.replace(k,d),(err)=>{
-                    if(err)return})})
+                fs.writeFile(path,pack.replace(k,d),(e)=>{
+                    if(e)return})})
             return true
         }catch(e){}},
     overwrite:function(path,d){
         try{
-            fs.writeFile(path,d,(err)=>{
-                if(err)return}) 
+            fs.writeFile(path,d,(e)=>{
+                if(e)return}) 
             return true
         }catch(e){}}}
 ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
 ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
 ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
-
     //create callback function to update the other if one is executed, such as uninstaller decolorizing APIs dyanmically if install is open
+ipcMain.on("verify",()=>{
+    var wins=BrowserWindow.getAllWindows()
+    fs.readFile(path.join(__dirname+"/config/path.txt"),'utf8',(e,d)=>{
+        if(e)return
+        fs.readdir(path.join(__dirname+"/resources/libraries"),function(e,lib){
+            if(e){
+                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
+                return}
+            for(var i=0;i<lib.length;i++){
+                fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(e,dat)=>{
+                    if(e){
+                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
+                        return}
+                    var j=JSON.parse(dat)
+                    fs.readFile(path.join(d+j["path"]),(e,data)=>{
+                        if(e)return
+                        if(String(data).includes("<meta bettersteam>")){
+                            wins.at(-1).webContents.executeJavaScript("console.log('"+path.join(d,j["path"])+"')")
+                            var ids=j["success"]["ids"].split(";")
+                            for(var i=0;i<ids.length;i++){
+                                    wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}}})})}})})})
 ipcMain.on("modify",(events,args)=>{
     switch(args[0],args[1]){
         case "install","undefined":
@@ -67,22 +86,26 @@ ipcMain.on("modify",(events,args)=>{
                     return}
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary verified.',''])")
                 wins[0].webContents.executeJavaScript("log(\"Build dictionary verified.\")")
-                fs.readdir(path.join(__dirname+"/resources/libraries"),function(er,lib){
-                    if(er){
+                fs.readdir(path.join(__dirname+"/resources/libraries"),function(e,lib){
+                    if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                         return}
                     for(var i=0;i<lib.length;i++){
-                        fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(err,data)=>{
-                            if(err){
-                                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Fail failure, please check permissions.'])")
+                        fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(e,data)=>{
+                            if(e){
+                                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                                 return}
                             var j=JSON.parse(data)
-                            if(rcon.overwrite(args[1]+j["path"],j[args[0]])){
+                            if(sys.overwrite(args[1]+j["path"],j[args[0]])){
                                 switch(args[0]){
                                     case "uninstall":
+                                        fs.writeFile(path.join(__dirname+"/config/path.txt"),"",(e)=>{
+                                            if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
                                         break
                                     case "install":
+                                        fs.writeFile(path.join(__dirname+"/config/path.txt"),args[1],(e)=>{
+                                            if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
                                         wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
@@ -96,7 +119,7 @@ ipcMain.on("modify",(events,args)=>{
                             //    case "uninstall":
                             //        break
                             //    case "install":
-                            //        if(rcon.overwrite(args[1]+j["path"],j[args[0]]))
+                            //        if(sys.overwrite(args[1]+j["path"],j[args[0]]))
                             //        break}
                             })}})})}})
     

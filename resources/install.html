@@ -55,6 +55,7 @@
     <script src="https://aerodata.netlify.com/libraries/events.js"></script>
     <script defer src="page.js"></script>
     <script>
+        window.api.send("verify")
         function log(d){document.body.children[1].children[3].children[1].insertAdjacentHTML("beforeEnd","<p style='white-space:nowrap;font-size:6px'>"+d+"</p>")}
         AddEvent(window,'keydown',function(e){
             console.log(e.keyCode)
