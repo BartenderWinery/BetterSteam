@@ -15,9 +15,9 @@ function dis(){
     setTimeout(function(){SYS.compile(["It's suggested that you understand CSS before continuing to edit values in the menu yourself",""])},7500)}
 var API={
     menu:function(e){
-        if(e.children[2].style.width!="95px"){
-            e.children[1].style.width="0"
-            e.children[2].style.width="95px"
+        if(e.children[3].style.width!="95px"){
+            e.children[2].style.width="0"
+            e.children[3].style.width="95px"
         }else{
-            e.children[1].style.width="15px"
-            e.children[2].style.width="0px"}}}
+            e.children[2].style.width="15px"
+            e.children[3].style.width="0px"}}}
