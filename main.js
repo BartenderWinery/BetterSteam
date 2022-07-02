@@ -21,7 +21,13 @@ function popout(bounds,page){
             preload:path.join(__dirname,"preload.js")}})
         win.loadFile(path.join(__dirname,page))
         setTimeout(function(){win.show()}),500}
-async function main(){popout([580,300],"index.html")}
+async function main(){
+    popout([580,300],"index.html")
+    fs.readFile(path.join(__dirname,"config/app.txt"),'utf8',(err,data)=>{
+        if(err)return
+        if(!String(data).includes("active")){
+            BrowserWindow.getAllWindows()[0].webContents.executeJavaScript("dis()")
+            fs.appendFile(path.join(__dirname,"config/app.txt"),";active",(err)=>{if(err)return})}})}
 app.on("ready",main)
 var rcon={
     verify:function(path,keyword){fs.access(path,fs.constants.R_OK|fs.constants.W_OK,(err,data)=>{if(data.includes(keyword)){return true}})},

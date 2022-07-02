@@ -1,3 +1,4 @@
+var Active=1
 window.onload=function(){
     if(navigator.userAgent.includes("Electron")){
         var p=document.createElement("style")
@@ -5,14 +6,13 @@ window.onload=function(){
         p.appendChild(document.createTextNode(".web{display:none}"))
         document.head.appendChild(p)
     }else{
-        if(document.title=="BetterSteam"){
-            setTimeout(function(){SYS.compile(["Unfortunally, it doesn't seem like you have installed the application",])},10000)
-            setTimeout(function(){SYS.compile(["If you're not sure, you can install it here: https://somewebsite.com/install",""])},12000)}}
-    if(document.title=="BetterSteam"){
-        setTimeout(function(){SYS.compile(["Welcome to -undecided-, you can edit how your steam behaves or looks here!"])},500)
-        setTimeout(function(){SYS.compile(["","To get started, you can click the first button in the row to the left"])},3000)
-        setTimeout(function(){SYS.compile(["You can find themes and plugins here: https://somewebsite.com/"])},5500)
-        setTimeout(function(){SYS.compile(["It's suggested that you understand CSS before continuing to edit values in the menu yourself",""])},7500)}}
+        setTimeout(function(){SYS.compile(["Unfortunally, it doesn't seem like you have installed the application",])},10000)
+        setTimeout(function(){SYS.compile(["If you're not sure, you can install it here: https://somewebsite.com/install",""])},12000)}}
+function dis(){
+    setTimeout(function(){SYS.compile(["Welcome to BetterSteam, you can edit how your steam behaves or looks here!"])},500)
+    setTimeout(function(){SYS.compile(["","To get started, you can click the first button in the row to the left"])},3000)
+    setTimeout(function(){SYS.compile(["You can find themes and plugins here: https://somewebsite.com/"])},5500)
+    setTimeout(function(){SYS.compile(["It's suggested that you understand CSS before continuing to edit values in the menu yourself",""])},7500)}
 var API={
     menu:function(e){
         if(e.children[2].style.width!="95px"){
