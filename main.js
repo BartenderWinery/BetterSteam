@@ -110,10 +110,10 @@ ipcMain.on("modify",(events,args)=>{
                                         fs.writeFile(path.join(__dirname+"/config/path.txt"),args[1],(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
-                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
+                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(webBrowser.getFocusedWindow()==wins[0]?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
                                         for(var i=0;i<ids.length;i++){
-                                            wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
+                                            if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
                                         break}
                                 return  }
                             //for(var i=0;i<"+j["success"]["id"]+".length){document.body.children[1].children[1].children["+j["success"]["id"]+"[i][0]].children["+j["success"]["id"]+"[i][1]].style.color='#00eb00'
