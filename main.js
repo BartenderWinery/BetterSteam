@@ -4,8 +4,8 @@ const fs=require("fs")
 //Important. Clean up imports so it doesn't slow down loading times.
 
 //require("electron-reload")(__dirname)
-require("electron-reload")(__dirname, {
-    electron:require(`${__dirname}/node_modules/electron`)})
+//require("electron-reload")(__dirname, {
+//    electron:require(`${__dirname}/node_modules/electron`)})
 
 function popout(bounds,page){
     var win=new BrowserWindow({
@@ -54,7 +54,7 @@ ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
 ipcMain.on("verify",()=>{
     var wins=BrowserWindow.getAllWindows()
     fs.readFile(path.join(__dirname+"/config/path.txt"),'utf8',(e,d)=>{
-        if(e)return
+        if(e||!d){wins.at(0).webContents.executeJavaScript("log(\"No API access detected, Build required.\")");return}
         fs.readdir(path.join(__dirname+"/resources/libraries"),function(e,lib){
             if(e){
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
@@ -68,7 +68,6 @@ ipcMain.on("verify",()=>{
                     fs.readFile(path.join(d+j["path"]),(e,data)=>{
                         if(e)return
                         if(String(data).includes("<meta bettersteam>")){
-                            wins.at(-1).webContents.executeJavaScript("console.log('"+path.join(d,j["path"])+"')")
                             var ids=j["success"]["ids"].split(";")
                             for(var i=0;i<ids.length;i++){
                                     wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}}})})}})})})
@@ -96,12 +95,16 @@ ipcMain.on("modify",(events,args)=>{
                                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                                 return}
                             var j=JSON.parse(data)
+                            var ids=j["success"]["ids"].split(";")
                             if(sys.overwrite(args[1]+j["path"],j[args[0]])){
                                 switch(args[0]){
                                     case "uninstall":
                                         fs.writeFile(path.join(__dirname+"/config/path.txt"),"",(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
+                                        if(wins[0])
+                                            for(var i=0;i<ids.length;i++){
+                                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='red'")}
                                         break
                                     case "install":
                                         fs.writeFile(path.join(__dirname+"/config/path.txt"),args[1],(e)=>{
@@ -109,7 +112,6 @@ ipcMain.on("modify",(events,args)=>{
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
                                         wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
-                                        var ids=j["success"]["ids"].split(";")
                                         for(var i=0;i<ids.length;i++){
                                             wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
                                         break}
