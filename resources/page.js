@@ -1,4 +1,3 @@
-var Active=1
 window.onload=function(){
     if(navigator.userAgent.includes("Electron")){
         var p=document.createElement("style")
