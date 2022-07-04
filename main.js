@@ -50,7 +50,14 @@ ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
 ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
 ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
-    //create callback function to update the other if one is executed, such as uninstaller decolorizing APIs dyanmically if install is open
+ipcMain.on("modded",(events,args)=>{
+    fs.readdir(path.join(__dirname+"/mods"),function(e,lib){
+        if(e)return
+            for(var i=0;i<lib.length;i++){
+                fs.readFile(path.join(__dirname+"/mods/"+lib[i]),'utf8',(e,dat)=>{
+                    if(e)return
+                        })}})})
+    //BrowserWindow.getAllWindows()[0].webContents.executeJavaScript()
 ipcMain.on("verify",()=>{
     var wins=BrowserWindow.getAllWindows()
     fs.readFile(path.join(__dirname+"/config/path.txt"),'utf8',(e,d)=>{
@@ -110,19 +117,11 @@ ipcMain.on("modify",(events,args)=>{
                                         fs.writeFile(path.join(__dirname+"/config/path.txt"),args[1],(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
-                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(webBrowser.getFocusedWindow()==wins[0]?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
+                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(wins[0].getTitle()=="Install for Steam"?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
                                         for(var i=0;i<ids.length;i++){
                                             if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
                                         break}
-                                return  }
-                            //for(var i=0;i<"+j["success"]["id"]+".length){document.body.children[1].children[1].children["+j["success"]["id"]+"[i][0]].children["+j["success"]["id"]+"[i][1]].style.color='#00eb00'
-                            //switch(args[0]){
-                            //    case "uninstall":
-                            //        break
-                            //    case "install":
-                            //        if(sys.overwrite(args[1]+j["path"],j[args[0]]))
-                            //        break}
-                            })}})})}})
+                                return}})}})})}})
     
 //replace <script injected>(keep name attrbute) and </script injected> with | and split; move to index 1 and you have your index
