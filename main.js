@@ -19,15 +19,15 @@ function popout(bounds,page){
             contextIsolation:true,
             enableRemoteModule:false,
             preload:path.join(__dirname,"preload.js")}})
-        win.loadFile(path.join(__dirname,page))
+        win.loadFile(__dirname+"/"+page)
         setTimeout(function(){win.show()}),500}
 async function main(){
     popout([580,300],"index.html")
-    fs.readFile(path.join(__dirname,"config/app.txt"),'utf8',(e,data)=>{
+    fs.readFile(__dirname+"/"+"config/app.txt",'utf8',(e,data)=>{
         if(e)return
         if(!String(data).includes("active")){
             BrowserWindow.getAllWindows()[0].webContents.executeJavaScript("dis()")
-            fs.appendFile(path.join(__dirname,"config/app.txt"),";active",(e)=>{if(e)return})}})}
+            fs.appendFile(__dirname+"/"+"config/app.txt",";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
 var sys={
     inject:function(path,k,d){
@@ -51,28 +51,30 @@ ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
 ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
 ipcMain.on("modded",(events,args)=>{
-    fs.readdir(path.join(__dirname+"/mods"),function(e,lib){
+    fs.readdir(__dirname+"/mods",function(e,lib){
         if(e)return
             for(var i=0;i<lib.length;i++){
-                fs.readFile(path.join(__dirname+"/mods/"+lib[i]),'utf8',(e,dat)=>{
+                fs.readFile(__dirname+"/mods/"+lib[i],'utf8',(e,dat)=>{
                     if(e)return
                         })}})})
     //BrowserWindow.getAllWindows()[0].webContents.executeJavaScript()
 ipcMain.on("verify",()=>{
     var wins=BrowserWindow.getAllWindows()
-    fs.readFile(path.join(__dirname+"/config/path.txt"),'utf8',(e,d)=>{
-        if(e||!d){wins.at(0).webContents.executeJavaScript("log(\"No API access detected, Build required.\")");return}
-        fs.readdir(path.join(__dirname+"/resources/libraries"),function(e,lib){
+    fs.readFile(__dirname+"/config/path.txt",'utf8',(e,d)=>{
+        if(e||!d){
+            wins.at(0).webContents.executeJavaScript("log(\"No API access detected, Build required.\")")
+            return}
+        fs.readdir(__dirname+"/resources/libraries",function(e,lib){
             if(e){
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                 return}
             for(var i=0;i<lib.length;i++){
-                fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(e,dat)=>{
+                fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,dat)=>{
                     if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                         return}
                     var j=JSON.parse(dat)
-                    fs.readFile(path.join(d+j["path"]),(e,data)=>{
+                    fs.readFile(d+j["path"],(e,data)=>{
                         if(e)return
                         if(String(data).includes("<meta bettersteam>")){
                             var ids=j["success"]["ids"].split(";")
@@ -92,21 +94,21 @@ ipcMain.on("modify",(events,args)=>{
                     return}
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary verified.',''])")
                 wins[0].webContents.executeJavaScript("log(\"Build dictionary verified.\")")
-                fs.readdir(path.join(__dirname+"/resources/libraries"),function(e,lib){
+                fs.readdir(__dirname+"/resources/libraries",function(e,lib){
                     if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                         return}
                     for(var i=0;i<lib.length;i++){
-                        fs.readFile(path.join(__dirname+"/resources/libraries/"+lib[i]),'utf8',(e,data)=>{
+                        fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,data)=>{
                             if(e){
                                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                                 return}
                             var j=JSON.parse(data)
                             var ids=j["success"]["ids"].split(";")
-                            if(sys.overwrite(args[1]+j["path"],j[args[0]])){
+                            if(sys.overwrite(args[1]+j["path"],j[args[0]].replace("{PATH}",__dirname+"/config/compiled.js"))){
                                 switch(args[0]){
                                     case "uninstall":
-                                        fs.writeFile(path.join(__dirname+"/config/path.txt"),"",(e)=>{
+                                        fs.writeFile(__dirname+"/config/path.txt","",(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
                                         if(wins[0])
@@ -114,7 +116,7 @@ ipcMain.on("modify",(events,args)=>{
                                                 wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='red'")}
                                         break
                                     case "install":
-                                        fs.writeFile(path.join(__dirname+"/config/path.txt"),args[1],(e)=>{
+                                        fs.writeFile(__dirname+"/config/path.txt",args[1],(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
                                         wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(wins[0].getTitle()=="Install for Steam"?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
