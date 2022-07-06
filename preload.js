@@ -6,6 +6,6 @@ const {
 contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
-            let validChannels = "minimize;maximize;close;popout;modify;verify";
+            let validChannels = "minimize;maximize;close;popout;modify;verify;mod;reboot";
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data)}},})

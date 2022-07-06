@@ -1,7 +1,5 @@
 const{app,BrowserWindow,ipcMain}=require("electron")
-const path=require("path")
 const fs=require("fs")
-//Important. Clean up imports so it doesn't slow down loading times.
 
 //require("electron-reload")(__dirname)
 //require("electron-reload")(__dirname, {
@@ -18,7 +16,7 @@ function popout(bounds,page){
             nodeIntegration:false,
             contextIsolation:true,
             enableRemoteModule:false,
-            preload:path.join(__dirname,"preload.js")}})
+            preload:(__dirname+"/preload.js")}})
         win.loadFile(__dirname+"/"+page)
         setTimeout(function(){win.show()}),500}
 async function main(){
@@ -30,16 +28,6 @@ async function main(){
             fs.appendFile(__dirname+"/"+"config/app.txt",";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
 var sys={
-    inject:function(path,k,d){
-        try{
-            fs.readFile(path,'utf8',(e,data)=>{
-                if(e)return
-                //Change comments to start/end comments per line to reserve comments instead of removing them
-                var pack=data.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g,'').replace(/[\r\n]+/g,"")
-                fs.writeFile(path,pack.replace(k,d),(e)=>{
-                    if(e)return})})
-            return true
-        }catch(e){}},
     overwrite:function(path,d){
         try{
             fs.writeFile(path,d,(e)=>{
@@ -50,25 +38,38 @@ ipcMain.on("minimize",()=>{BrowserWindow.getFocusedWindow().minimize()})
 ipcMain.on("maximize",()=>{BrowserWindow.getFocusedWindow().maximize()})
 ipcMain.on("close",()=>{BrowserWindow.getFocusedWindow().close()})
 ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
-ipcMain.on("modded",(events,args)=>{
+ipcMain.on("reboot",()=>{
+    app.relaunch()
+	app.exit(0)})
+ipcMain.on("mod",()=>{
+    var wins=BrowserWindow.getAllWindows()
+    fs.readdir(__dirname+"/cache",function(e,lib){
+        if(e)return
+        for(var i=0;i<lib.length;i++)
+            fs.unlink(__dirname+"/cache/"+lib[i],(e)=>{
+                if(e)return})})
     fs.readdir(__dirname+"/mods",function(e,lib){
         if(e)return
-            for(var i=0;i<lib.length;i++){
-                fs.readFile(__dirname+"/mods/"+lib[i],'utf8',(e,dat)=>{
-                    if(e)return
-                        })}})})
-    //BrowserWindow.getAllWindows()[0].webContents.executeJavaScript()
+        for(var i=0;i<lib.length;i++)
+            fs.readFile(__dirname+"/mods/"+lib[i],(e,d)=>{
+                if(e)return
+                var d=JSON.parse(d)
+                var dat=Object.keys(d)
+                for(var _i=0;_i<dat.length;_i++)
+                    for(var __i=0;__i<d[dat[_i]].length;__i++)
+                        fs.appendFile(__dirname+"/cache/"+dat[_i]+".js",d[dat[_i]][__i],(e)=>{
+                            if(e)return})})})})
 ipcMain.on("verify",()=>{
     var wins=BrowserWindow.getAllWindows()
-    fs.readFile(__dirname+"/config/path.txt",'utf8',(e,d)=>{
+    fs.readFile(__dirname+"/config/path.txt",(e,d)=>{
         if(e||!d){
             wins.at(0).webContents.executeJavaScript("log(\"No API access detected, Build required.\")")
             return}
-        fs.readdir(__dirname+"/resources/libraries",function(e,lib){
+        fs.readdir(__dirname+"/resources/libraries",(e,lib)=>{
             if(e){
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                 return}
-            for(var i=0;i<lib.length;i++){
+            for(var i=0;i<lib.length;i++)
                 fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,dat)=>{
                     if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
@@ -78,8 +79,8 @@ ipcMain.on("verify",()=>{
                         if(e)return
                         if(String(data).includes("<meta bettersteam>")){
                             var ids=j["success"]["ids"].split(";")
-                            for(var i=0;i<ids.length;i++){
-                                    wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}}})})}})})})
+                            for(var i=0;i<ids.length;i++)
+                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}})})})})})
 ipcMain.on("modify",(events,args)=>{
     switch(args[0],args[1]){
         case "install","undefined":
@@ -98,22 +99,22 @@ ipcMain.on("modify",(events,args)=>{
                     if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                         return}
-                    for(var i=0;i<lib.length;i++){
+                    for(var i=0;i<lib.length;i++)
                         fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,data)=>{
                             if(e){
                                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                                 return}
                             var j=JSON.parse(data)
                             var ids=j["success"]["ids"].split(";")
-                            if(sys.overwrite(args[1]+j["path"],j[args[0]].replace("{PATH}",__dirname+"/config/compiled.js"))){
+                            if(sys.overwrite(args[1]+j["path"],j[args[0]].replace("{PATH}",__dirname+"/cache/global.js").replace("{MODPATH}",__dirname+"/cache/"+j["path"].split("/").at(-1)))){
                                 switch(args[0]){
                                     case "uninstall":
                                         fs.writeFile(__dirname+"/config/path.txt","",(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
                                         if(wins[0])
-                                            for(var i=0;i<ids.length;i++){
-                                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='red'")}
+                                            for(var i=0;i<ids.length;i++)
+                                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='red'")
                                         break
                                     case "install":
                                         fs.writeFile(__dirname+"/config/path.txt",args[1],(e)=>{
@@ -121,9 +122,7 @@ ipcMain.on("modify",(events,args)=>{
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
                                         wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(wins[0].getTitle()=="Install for Steam"?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
-                                        for(var i=0;i<ids.length;i++){
-                                            if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}
+                                        for(var i=0;i<ids.length;i++)
+                                            if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")
                                         break}
-                                return}})}})})}})
-    
-//replace <script injected>(keep name attrbute) and </script injected> with | and split; move to index 1 and you have your index
+                                return}})})})}})

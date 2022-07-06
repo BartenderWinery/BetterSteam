@@ -9,7 +9,7 @@
         "electron": "^19.0.4"
     },
     "scripts": {
-        "start": "electron ."
+        "start":"electron ."
     },
     "dependencies": {
         "electron-reload": "^2.0.0-alpha.1"

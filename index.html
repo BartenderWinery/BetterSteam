@@ -53,12 +53,14 @@
                     cmd:cmd.children["display"].children[0].children[0],
                     buffer:120}}
             CMD=new Map([
-                ["help",["SYS.compile(['?:\\>[]',::,''])",["'dog         dog','Exit        Exits the process','Uninstall   Recovers orginial code','Install     Opens the install menu','cls         Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
+                ["help",["SYS.compile(['?:\\>[]',::,''])",["'Restart     Reboots the entire electron process','Reboot      Reboots the entire electron process','dog         dog','Exit        Exits the process','Uninstall   Recovers orginial code','Install     Opens the install menu','cls         Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
                 ["install",["window.api.send('modify',['install','::'])","undefined"]],
                 ["uninstall",["window.api.send('modify',['uninstall','::'])"]],
                 ["exit",["window.api.send('close')"]],
                 ["dog",["document.body.insertAdjacentHTML('afterbegin','<div style=background-image:url(\"https://cdn.discordapp.com/attachments/899434577288888390/991767761355288597/FV5UMxCUIAExbVX.png\");position:absolute;width:-webkit-fill-available;z-index:-1;height:-webkit-fill-available;background-position-y:-145px;background-size:cover></div>');new Audio(\"https://www.myinstants.com/media/sounds/reflections.mp3\").play()"]],
-                ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]]])
+                ["cls",["while(document.body.children['cmd'].children.length-2){document.body.children['cmd'].children[0].remove()};document.body.children['cmd'].children[0].innerText=''"]],
+                ["reboot",["window.api.send('reboot')"]],
+                ["restart",["window.api.send('reboot')"]]])
         </script>
     </body>
 </html>
