@@ -5,6 +5,7 @@ const fs=require("fs")
 //require("electron-reload")(__dirname, {
 //    electron:require(`${__dirname}/node_modules/electron`)})
 
+//create loading screen later
 function popout(bounds,page){
     var win=new BrowserWindow({
         width:bounds[0],
@@ -28,6 +29,23 @@ async function main(){
             fs.appendFile(__dirname+"/"+"config/app.txt",";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
 var sys={
+    compile:function(){
+        fs.readdir(__dirname+"/cache",function(e,lib){
+            if(e)return
+            for(var i=0;i<lib.length;i++)
+                fs.unlink(__dirname+"/cache/"+lib[i],(e)=>{
+                    if(e)return})})
+        fs.readdir(__dirname+"/mods",function(e,lib){
+            if(e)return
+            for(var i=0;i<lib.length;i++)
+                fs.readFile(__dirname+"/mods/"+lib[i],(e,d)=>{
+                    if(e)return
+                    var d=JSON.parse(d)
+                    var dat=Object.keys(d)
+                    for(var _i=0;_i<dat.length;_i++)
+                        for(var __i=0;__i<d[dat[_i]].length;__i++)
+                            fs.appendFile(__dirname+"/cache/"+dat[_i]+".js",d[dat[_i]][__i],(e)=>{
+                                if(e)return})})})},
     overwrite:function(path,d){
         try{
             fs.writeFile(path,d,(e)=>{
@@ -41,24 +59,6 @@ ipcMain.on("popout",(events,args)=>{popout([400,220],args)})
 ipcMain.on("reboot",()=>{
     app.relaunch()
 	app.exit(0)})
-ipcMain.on("mod",()=>{
-    var wins=BrowserWindow.getAllWindows()
-    fs.readdir(__dirname+"/cache",function(e,lib){
-        if(e)return
-        for(var i=0;i<lib.length;i++)
-            fs.unlink(__dirname+"/cache/"+lib[i],(e)=>{
-                if(e)return})})
-    fs.readdir(__dirname+"/mods",function(e,lib){
-        if(e)return
-        for(var i=0;i<lib.length;i++)
-            fs.readFile(__dirname+"/mods/"+lib[i],(e,d)=>{
-                if(e)return
-                var d=JSON.parse(d)
-                var dat=Object.keys(d)
-                for(var _i=0;_i<dat.length;_i++)
-                    for(var __i=0;__i<d[dat[_i]].length;__i++)
-                        fs.appendFile(__dirname+"/cache/"+dat[_i]+".js",d[dat[_i]][__i],(e)=>{
-                            if(e)return})})})})
 ipcMain.on("verify",()=>{
     var wins=BrowserWindow.getAllWindows()
     fs.readFile(__dirname+"/config/path.txt",(e,d)=>{
@@ -124,5 +124,6 @@ ipcMain.on("modify",(events,args)=>{
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
                                         for(var i=0;i<ids.length;i++)
                                             if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")
+                                        sys.compile()
                                         break}
                                 return}})})})}})
