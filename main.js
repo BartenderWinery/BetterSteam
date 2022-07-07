@@ -6,6 +6,7 @@ const fs=require("fs")
 //    electron:require(`${__dirname}/node_modules/electron`)})
 
 //create loading screen later
+//file method doesnt work, use local file path instead.
 function popout(bounds,page){
     var win=new BrowserWindow({
         width:bounds[0],
@@ -100,13 +101,14 @@ ipcMain.on("modify",(events,args)=>{
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                         return}
                     for(var i=0;i<lib.length;i++)
-                        fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,data)=>{
+                        file=lib[i]
+                        fs.readFile(__dirname+"/resources/libraries/"+file,'utf8',(e,data)=>{
                             if(e){
                                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
                                 return}
                             var j=JSON.parse(data)
                             var ids=j["success"]["ids"].split(";")
-                            if(sys.overwrite(args[1]+j["path"],j[args[0]].replace("{PATH}",__dirname+"/cache/global.js").replace("{MODPATH}",__dirname+"/cache/"+j["path"].split("/").at(-1)))){
+                            if(sys.overwrite(args[1]+j["path"],j[args[0]].replace("{PATH}",__dirname+"/cache/global.js").replace("{MODPATH}",__dirname+"/cache/"+file.split(".")[0]+".js"))){
                                 switch(args[0]){
                                     case "uninstall":
                                         fs.writeFile(__dirname+"/config/path.txt","",(e)=>{

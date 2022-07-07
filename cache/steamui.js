@@ -1,0 +1,3 @@
+
+document.body.insertAdjacentHTML('beforeend','<div id=debug style=position:absolute;height:100%;width:400px;right:0;top:0></div>')
+function traceMethodCalls(obj){;return new Proxy(obj, {get(target, methodName, receiver) {const originMethod = target[methodName];return function(...args) {document.body.children["debug"].insertAdjacentHTML("afterbegin","<p style='font-size:10px;margin:0;text-align:right;color:red;white-space:nowrap'>"+args+"</p>");return originMethod.apply(this, args);}}})}console = traceMethodCalls(console)
