@@ -29,6 +29,8 @@ async function main(){
             fs.appendFile(__dirname+"/config/app.txt",";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
 var sys={
+    callback:function(i){
+        return BrowserWindow.getAllWindows().find(win=>win.getTitle()==i)},
     overwrite:function(path,d){
         try{
             fs.writeFile(path,d,(e)=>{
@@ -43,27 +45,22 @@ ipcMain.on("reboot",()=>{
     app.relaunch()
 	app.exit(0)})
 ipcMain.on("verify",()=>{
-    var wins=BrowserWindow.getAllWindows()
     fs.readFile(__dirname+"/config/path.txt",(e,d)=>{
         if(e||!d){
-            wins.at(0).webContents.executeJavaScript("log(\"No API access detected, Build required.\")")
+            sys.callback("Install for Steam").webContents.executeJavaScript("log(\"No API access detected, Build required.\")")
             return}
         fs.readdir(__dirname+"/resources/libraries",(e,lib)=>{
-            if(e){
-                wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
-                return}
+            if(e)return
             for(var i=0;i<lib.length;i++)
                 fs.readFile(__dirname+"/resources/libraries/"+lib[i],'utf8',(e,dat)=>{
-                    if(e){
-                        wins.at(-1).webContents.executeJavaScript("SYS.compile(['Failure, please check permissions.'])")
-                        return}
+                    if(e)return
                     var j=JSON.parse(dat)
                     fs.readFile(d+j["path"],(e,data)=>{
                         if(e)return
                         if(String(data).includes("<meta bettersteam>")){
                             var ids=j["success"]["ids"].split(";")
                             for(var i=0;i<ids.length;i++)
-                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}})})})})})
+                                sys.callback("Install for Steam").webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}})})})})})
 ipcMain.on("modify",(events,args)=>{
     switch(args[0],args[1]){
         case "install","undefined":
@@ -74,12 +71,12 @@ ipcMain.on("modify",(events,args)=>{
             fs.access(args[1],fs.constants.R_OK|fs.constants.W_OK,(e,d)=>{
                 if(e){
                     wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary wasn't found, please check the path.',''])")
-                    wins[0].webContents.executeJavaScript("log(\"Build dictionary wasn\'t found, please check the path.\");document.activeElement.value=''")
+                    sys.callback("Install for Steam").webContents.executeJavaScript("log(\"Build dictionary wasn\'t found, please check the path.\");document.activeElement.value=''")
                     return}
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary verified.',''])")
-                wins[0].webContents.executeJavaScript("log(\"Build dictionary verified.\")")
+                sys.callback("Install for Steam").webContents.executeJavaScript("log(\"Build dictionary verified.\")")
                 fs.readdir(__dirname+"/resources/libraries",function(e,lib){
-                    var j,file
+                    var j,file,c
                     if(e){
                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Library failure, please vaildate your files.'])")
                         return}
@@ -97,19 +94,18 @@ ipcMain.on("modify",(events,args)=>{
                                         fs.writeFile(__dirname+"/config/path.txt","",(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam modifications uninstalled; Files recovered'])")
-                                        if(wins[0])
-                                            for(var i=0;i<ids.length;i++)
-                                                wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='red'")
+                                        c="red"
                                         break
                                     case "install":
                                         fs.writeFile(__dirname+"/config/path.txt",args[1],(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
-                                        wins[0].webContents.executeJavaScript("log('"+j["success"]["log"]+"');"+(wins[0].getTitle()=="Install for Steam"?"document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'":""))
+                                        sys.callback("Install for Steam").webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
-                                        for(var i=0;i<ids.length;i++)
-                                            if(wins[0])wins[0].webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")
+                                        c="#00eb00"
                                         break}
+                                for(var i=0;i<ids.length;i++)
+                                    sys.callback("Install for Steam").webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='"+c+"'")
                                 fs.readdir(__dirname+"/mods",function(e,pack){
                                     if(e)return
                                     for(var i=0;i<pack.length;i++){
@@ -130,21 +126,3 @@ ipcMain.on("modify",(events,args)=>{
                                                         fs.unlink(p,(e)=>{
                                                             if(e)return})
                                                         return}}})}})}})}})})}})
-                                                        
-                                                            //compile:function(path){
-    //    fs.readdir(path+"/cache",function(e,lib){
-    //        if(e)return
-    //        for(var i=0;i<lib.length;i++)
-    //            fs.unlink(path+"/cache/"+lib[i],(e)=>{
-    //                if(e)return})})
-    //    fs.readdir(__dirname+"/mods",function(e,lib){
-    //        if(e)return
-    //        for(var i=0;i<lib.length;i++)
-    //            fs.readFile(__dirname+"/mods/"+lib[i],(e,d)=>{
-    //                if(e)return
-    //                var d=JSON.parse(d)
-    //                var dat=Object.keys(d)
-    //                for(var _i=0;_i<dat.length;_i++)
-    //                    for(var __i=0;__i<d[dat[_i]].length;__i++)
-    //                        fs.appendFile(path+"/cache/"+dat[_i]+".js",d[dat[_i]][__i],(e)=>{
-    //                            if(e)return})})})},
