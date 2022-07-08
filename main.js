@@ -29,8 +29,10 @@ async function main(){
             fs.appendFile(__dirname+"/config/app.txt",";active",(e)=>{if(e)return})}})}
 app.on("ready",main)
 var sys={
-    callback:function(i){
-        return BrowserWindow.getAllWindows().find(win=>win.getTitle()==i)},
+    callback:function(i,j){
+        try{
+            BrowserWindow.getAllWindows().find(win=>win.getTitle()==i).webContents.executeJavaScript(j)
+        }catch(e){}},
     overwrite:function(path,d){
         try{
             fs.writeFile(path,d,(e)=>{
@@ -47,7 +49,7 @@ ipcMain.on("reboot",()=>{
 ipcMain.on("verify",()=>{
     fs.readFile(__dirname+"/config/path.txt",(e,d)=>{
         if(e||!d){
-            sys.callback("Install for Steam").webContents.executeJavaScript("log(\"No API access detected, Build required.\")")
+            sys.callback("Install for Steam","log(\"No API access detected, Build required.\")")
             return}
         fs.readdir(__dirname+"/resources/libraries",(e,lib)=>{
             if(e)return
@@ -60,7 +62,7 @@ ipcMain.on("verify",()=>{
                         if(String(data).includes("<meta bettersteam>")){
                             var ids=j["success"]["ids"].split(";")
                             for(var i=0;i<ids.length;i++)
-                                sys.callback("Install for Steam").webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}})})})})})
+                                sys.callback("Install for Steam","document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='#00eb00'")}})})})})})
 ipcMain.on("modify",(events,args)=>{
     switch(args[0],args[1]){
         case "install","undefined":
@@ -71,10 +73,10 @@ ipcMain.on("modify",(events,args)=>{
             fs.access(args[1],fs.constants.R_OK|fs.constants.W_OK,(e,d)=>{
                 if(e){
                     wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary wasn't found, please check the path.',''])")
-                    sys.callback("Install for Steam").webContents.executeJavaScript("log(\"Build dictionary wasn\'t found, please check the path.\");document.activeElement.value=''")
+                    sys.callback("Install for Steam","log(\"Build dictionary wasn\'t found, please check the path.\");document.activeElement.value=''")
                     return}
                 wins.at(-1).webContents.executeJavaScript("SYS.compile(['Build dictionary verified.',''])")
-                sys.callback("Install for Steam").webContents.executeJavaScript("log(\"Build dictionary verified.\")")
+                sys.callback("Install for Steam","log(\"Build dictionary verified.\")")
                 fs.readdir(__dirname+"/resources/libraries",function(e,lib){
                     var j,file,c
                     if(e){
@@ -100,12 +102,12 @@ ipcMain.on("modify",(events,args)=>{
                                         fs.writeFile(__dirname+"/config/path.txt",args[1],(e)=>{
                                             if(e)return})
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['Steam has been successfully modified'])")
-                                        sys.callback("Install for Steam").webContents.executeJavaScript("log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
+                                        sys.callback("Install for Steam","log('"+j["success"]["log"]+"');document.activeElement.value='';document.activeElement.parentElement.innerText='"+args[1]+"'")
                                         wins.at(-1).webContents.executeJavaScript("SYS.compile(['"+j["success"]["log"]+"'])")
                                         c="#00eb00"
                                         break}
                                 for(var i=0;i<ids.length;i++)
-                                    sys.callback("Install for Steam").webContents.executeJavaScript("document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='"+c+"'")
+                                    sys.callback("Install for Steam","document.body.children[1].children["+ids[i][0]+"].children[1].children["+ids[i][2]+"].style.color='"+c+"'")
                                 fs.readdir(__dirname+"/mods",function(e,pack){
                                     if(e)return
                                     for(var i=0;i<pack.length;i++){
@@ -119,7 +121,7 @@ ipcMain.on("modify",(events,args)=>{
                                                 var p=args[1]+j["path"].replace(j["path"].split("/").at(-1),file.split(".")[0]+".js")
                                                 switch(args[0]){
                                                     case "install":
-                                                        fs.appendFile(p,json[dat[_i]],(e)=>{
+                                                        fs.appendFile(p,json[dat[_i]]+";",(e)=>{
                                                             if(e)return})
                                                         return
                                                     case "uninstall":
