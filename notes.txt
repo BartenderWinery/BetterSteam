@@ -1,3 +1,7 @@
+New important information => some clients experience a bug where files are constantly updated. however it is not known how to recreate this.
+    To update these files, for example steam.menu, you have to relogin and install after the steam login has been opened. 
+    If the client is open, these files are not normally updated. 
+
 clientui - {
     index friends.html
     friends.js
