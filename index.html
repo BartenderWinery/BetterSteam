@@ -51,7 +51,8 @@
                 var app={
                     terminal:cmd.children["display"],
                     cmd:cmd.children["display"].children[0].children[0],
-                    buffer:120}}
+                    buffer:120,
+                    noscroll:"true"}}
             CMD=new Map([
                 ["help",["SYS.compile(['?:\\>[]',::,''])",["'Restart     Reboots the entire electron process','Reboot      Reboots the entire electron process','dog         dog','Exit        Exits the process','Uninstall   Recovers orginial code','Install     Opens the install menu','cls         Clears the screen','','Don\\'t panic! This section of the menu is not required nor used yet.'"]]],
                 ["install",["window.api.send('modify',['install','::'])","undefined"]],

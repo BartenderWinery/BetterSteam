@@ -6,7 +6,7 @@ const fs=require("fs")
 //    electron:require(`${__dirname}/node_modules/electron`)})
 
 //create loading screen later
-//file method doesnt work, use local file path instead.
+//add compatibility layer with betterdiscord to carry styles over
 function popout(bounds,page){
     var win=new BrowserWindow({
         width:bounds[0],
